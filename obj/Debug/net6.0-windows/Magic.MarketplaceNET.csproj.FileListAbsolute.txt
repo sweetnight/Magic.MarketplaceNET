@@ -1,0 +1,38 @@
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.csproj.AssemblyReference.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.AssemblyInfoInputs.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.AssemblyInfo.cs
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.csproj.CoreCompileInputs.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\linux\selenium-manager
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\macos\selenium-manager
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\windows\selenium-manager.exe
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.deps.json
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.BrowserAutomationNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.BrowserAutomationNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.Ma.53B99099.Up2Date
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\refint\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Marketplace Magic X\Magic.MarketplaceNET\obj\Debug\net6.0-windows\ref\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\linux\selenium-manager
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\macos\selenium-manager
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\selenium-manager\windows\selenium-manager.exe
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.deps.json
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.MarketplaceNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.BrowserAutomationNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.HelperNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.BrowserAutomationNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\bin\Debug\net6.0-windows\Magic.HelperNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.csproj.AssemblyReference.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.AssemblyInfoInputs.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.AssemblyInfo.cs
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.csproj.CoreCompileInputs.cache
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.Ma.53B99099.Up2Date
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\refint\Magic.MarketplaceNET.dll
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\Magic.MarketplaceNET.pdb
+C:\Users\Dell Latitude 7400\Documents\repos\Magic.MarketplaceNET\obj\Debug\net6.0-windows\ref\Magic.MarketplaceNET.dll
