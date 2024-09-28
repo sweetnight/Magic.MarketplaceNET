@@ -85,7 +85,8 @@ namespace Magic.MarketplaceNET.Facebook
             
             for(int i = 0; i < 2; i++)
             {
-                messageTextBox = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pesan' and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']", Timeout);
+                //messageTextBox = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pesan' and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']", Timeout);
+                messageTextBox = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'tulis ke') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']", Timeout);
 
                 if(!messageTextBox.State)
                 {
