@@ -498,6 +498,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             #region INPUT LOKASI
 
+            /*
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs, Chrome));
 
             WebElement inputLokasiElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='lokasi']//input[@type='text']", Timeout);
@@ -549,6 +550,9 @@ namespace Magic.MarketplaceNET.Facebook
                 PostEvent?.Invoke(new PostEventEventArgs(EventType.StopAfterLocationSelected, listingInputs, Chrome));
                 return;
             }
+            */
+
+            InputLocation();
 
             #endregion
 
@@ -830,6 +834,63 @@ namespace Magic.MarketplaceNET.Facebook
 
         } // end of method
 
+        private void InputLocation()
+        {
+
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs, Chrome));
+
+            WebElement inputLokasiElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='lokasi']//input[@type='text']", Timeout);
+            SafeClickResult safeClickResult = inputLokasiElement.SafeClick();
+
+            if (!safeClickResult.Status)
+            {
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickLocationFailed, listingInputs, Chrome));
+                return;
+            }
+
+            //Magic.Helper.PutContentToClipboard(listingInputs.location);
+            inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
+            inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Delete);
+            //safeSendKeysResult = inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
+            SafeSendKeysResult safeSendKeysResult = inputLokasiElement.SafeCopyAndPaste(listingInputs.Location!);
+
+            if (!safeSendKeysResult.Status)
+            {
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.LocationPasteFailed, listingInputs, Chrome));
+                return;
+            }
+
+            Thread.Sleep(2000);
+
+            WebElement inputLokasiItem = new WebElement();
+
+            if (listingInputs.LocationPosition != 0)
+            {
+                inputLokasiItem = Chrome.FindElementByXPath($"(//ul[contains({Chrome.ToLower("@aria-label")},'pencarian yang')]/li)[{listingInputs.LocationPosition}]", 5);
+            }
+            else
+            {
+                inputLokasiItem = Chrome.FindElementByXPath($"//ul[contains({Chrome.ToLower("@aria-label")}, 'pencarian yang') and @role='listbox']//li[@role='option'][1]", 5);
+            }
+
+            safeClickResult = inputLokasiItem.SafeClick();
+
+            if (!safeClickResult.Status)
+            {
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectLocationFailed, listingInputs, Chrome));
+                return;
+            }
+
+            Thread.Sleep(2000);
+
+            if (CancellationToken.IsCancellationRequested)
+            {
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.StopAfterLocationSelected, listingInputs, Chrome));
+                return;
+            }
+
+        } // end of method
+
         private bool InputLabel()
         {
 
@@ -1026,6 +1087,8 @@ namespace Magic.MarketplaceNET.Facebook
             SafeSendKeysResult safeSendKeysResult = inputJudulElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
             //safeSendKeysResult = inputJudulElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
             safeSendKeysResult = inputJudulElement.SafeCopyAndPaste(listingInputs!.Title!);
+
+            InputLocation();
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.DraftAndEditSuccess, listingInputs, Chrome));
 
