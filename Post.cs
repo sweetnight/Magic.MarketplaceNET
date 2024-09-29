@@ -95,7 +95,7 @@ namespace Magic.MarketplaceNET.Facebook
             public static EventType TitleEditFailed { get; } = new EventType(69, "Gagal edit judul");
             public static EventType PriceEditFailed { get; } = new EventType(70, "Gagal edit harga");
             public static EventType RenewButtonClickFailed { get; } = new EventType(71, "Gagal klik tombol perbarui (tombol perbarui eksis)");
-            public static EventType EditForLabelSuccess { get; } = new EventType(72, "Berhasil edit listing untuk input label");
+            public static EventType EditForLabelAndPriceSuccess { get; } = new EventType(72, "Berhasil edit listing untuk input label");
             public static EventType PostSuccessWithoutImages { get; } = new EventType(73, "Post produk berhasil tapi gambar tidak muncul");
             public static EventType PostSuccess { get; } = new EventType(74, "Post produk berhasil dengan baik");
 
@@ -1289,7 +1289,9 @@ namespace Magic.MarketplaceNET.Facebook
                 Thread.Sleep(1000);
             }
 
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.EditForLabelSuccess, listingInputs!, Chrome, listingLink));
+            InputLocation();
+
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.EditForLabelAndPriceSuccess, listingInputs!, Chrome, listingLink));
 
             return true;
 
