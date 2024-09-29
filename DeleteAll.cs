@@ -22,6 +22,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             public static EventType StartDeleting { get; } = new EventType(1, "Delete post dimulai");
             public static EventType AccountCheckpoint { get; } = new EventType(2, "Akun checkpoint");
+            public static EventType MPBanned { get; } = new EventType(2, "Akun checkpoint");
             public static EventType AListingDeleted { get; } = new EventType(3, "Sebuah listing telah dihapus");
 
         } // end of method
@@ -68,6 +69,11 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 DeleteAllEvent?.Invoke(new DeleteAllEventArgs(EventType.AccountCheckpoint, 0));
                 return 0;
+            }
+            else if (checkpointWebPage.Url.Contains("ineligible"))
+            {
+                DeleteAllEvent?.Invoke(new DeleteAllEventArgs(EventType.MPBanned, 0));
+                return -1;
             }
 
             // ini diperlukan jika listing pertama tidak bisa didelete, jadi pilih listing kedua.

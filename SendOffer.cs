@@ -25,11 +25,13 @@ namespace Magic.MarketplaceNET.Facebook
             public static EventType StartSendingOffer { get; } = new EventType(1, "Start Sending Offer");
             public static EventType OfferMessageIsEmpty { get; } = new EventType(2, "Message untuk penawaran isinya kosong");
             public static EventType AccountCheckpoint { get; } = new EventType(3, "Akun checkpoint");
+            public static EventType MPBanned { get; } = new EventType(3, "Akun tidak punya MP alias banned atau tidak aktif");
             public static EventType UnavailableProduct { get; } = new EventType(4, "Sudah membuka URL tawaran tapi tawaran tidak tersedia");
             public static EventType NoSendMessageButton { get; } = new EventType(5, "Tombol kirim pesan / kirim pesan lagi tidak ditemukan");
             public static EventType SendMessageButtonClickFailed { get; } = new EventType(6, "Gagal klik tombol kirim pesan");
             public static EventType PasteMessageFailed { get; } = new EventType(7, "Gagal paste text kirim pesan");
             public static EventType NoSendMessageAgainTextBox { get; } = new EventType(8, "Pesan text box tidak muncul untuk kirim pesan lagi.");
+            public static EventType NoOpenInMessengerLink { get; } = new EventType(8, "Link open di messenger gak ditemukan.");
             public static EventType SendEnterButtonFailed { get; } = new EventType(9, "Gagal enter text kirim pesan");
             public static EventType SendOfferLimit { get; } = new EventType(10, "Akun boost mencapai limit untuk send offer");
             public static EventType SendOfferSuccess { get; } = new EventType(11, "Send first offer success");
@@ -122,6 +124,11 @@ namespace Magic.MarketplaceNET.Facebook
                 SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.AccountCheckpoint, listingURL, Chrome));
                 return false;
             }
+            else if (webPage.Url.Contains("ineligible"))
+            {
+                SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.MPBanned, listingURL, Chrome));
+                return false;
+            }
             else if (webPage.Url.Contains("unavailable_product=1"))
             {
                 SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.UnavailableProduct, listingURL, Chrome));
@@ -186,7 +193,8 @@ namespace Magic.MarketplaceNET.Facebook
                     return false;
                 }
 
-                chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                //chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
 
                 if (!chatSettings.State)
                 {
@@ -235,7 +243,8 @@ namespace Magic.MarketplaceNET.Facebook
 
                 Thread.Sleep(3000);
 
-                chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                //chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
             }
 
             #endregion
@@ -245,6 +254,12 @@ namespace Magic.MarketplaceNET.Facebook
             safeClickResult = chatSettings.SafeClick();
 
             WebElement openInMessengerButton = Chrome.FindElementByXPath($"//a[@role='menuitem'][.//span[contains({Chrome.ToLower("text()")}, 'buka di messenger')]]", Timeout);
+
+            if(!openInMessengerButton.State)
+            {
+                SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.NoOpenInMessengerLink, listingURL, Chrome));
+                return false;
+            }
 
             string chatUrl = openInMessengerButton.Item!.GetAttribute("href");
             string pattern = @"/messages/t/(\d+)/";
