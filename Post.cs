@@ -1261,10 +1261,12 @@ namespace Magic.MarketplaceNET.Facebook
 
             // edit label
 
-            if (Identical && listingInputs!.Tags != "")
+            if (listingInputs!.Tags != "")
             {
                 if (!InputLabel()) return false;
             }
+
+            InputLocation();
 
             WebElement perbaruiButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='perbarui']", Timeout);
 
@@ -1288,8 +1290,6 @@ namespace Magic.MarketplaceNET.Facebook
 
                 Thread.Sleep(1000);
             }
-
-            InputLocation();
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.EditForLabelAndPriceSuccess, listingInputs!, Chrome, listingLink));
 
