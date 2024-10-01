@@ -95,18 +95,21 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']");
 
-                string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
-
-                if (newMessagePopUpSwitchSelected == "true")
+                if (newMessagePopUpSwitch.State)
                 {
-                    newMessagePopUpSwitch.SafeClick();
+                    string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
 
-                    for (int i = 0; i < Timeout; i++)
+                    if (newMessagePopUpSwitchSelected == "true")
                     {
-                        newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']", 1);
-                        newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+                        newMessagePopUpSwitch.SafeClick();
 
-                        if (newMessagePopUpSwitchSelected == "false") break;
+                        for (int i = 0; i < Timeout; i++)
+                        {
+                            newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']", 1);
+                            newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+
+                            if (newMessagePopUpSwitchSelected == "false") break;
+                        }
                     }
                 }
             }
