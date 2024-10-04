@@ -96,7 +96,7 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             // disini sudah loading sepenuhnya
-            // mesti cek jendela pin, kasih waktu 3 detik saja
+            // mesti cek jendela pin/kode sinkronisasi, kasih waktu 3 detik saja
 
             WebElement pinRequestDialogCloseButton = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'menyinkronkan')]/ancestor::div[@role='dialog']//div[{Chrome.ToLower("@aria-label")}='tutup' and @role='button']", 3);
 
