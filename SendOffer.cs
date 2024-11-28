@@ -85,30 +85,34 @@ namespace Magic.MarketplaceNET.Facebook
             SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.TurningOffMessagePopup, listingURL, Chrome));
 
             WebElement messengerButton = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'messenger') and @role='button' and not(@aria-hidden='true')]", Timeout);
-            messengerButton.SafeClick();
+            
+            SafeClickResult safeClickResult = messengerButton.SafeClick();
 
-            WebElement optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
-
-            SafeClickResult optionButtonSafeClick = optionButton.SafeClick();
-
-            if(optionButtonSafeClick.Status)
+            if (safeClickResult.Status)
             {
-                WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']");
+                WebElement optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
 
-                if (newMessagePopUpSwitch.State)
+                SafeClickResult optionButtonSafeClick = optionButton.SafeClick();
+
+                if (optionButtonSafeClick.Status)
                 {
-                    string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+                    WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']");
 
-                    if (newMessagePopUpSwitchSelected == "true")
+                    if (newMessagePopUpSwitch.State)
                     {
-                        newMessagePopUpSwitch.SafeClick();
+                        string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
 
-                        for (int i = 0; i < Timeout; i++)
+                        if (newMessagePopUpSwitchSelected == "true")
                         {
-                            newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']", 1);
-                            newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+                            newMessagePopUpSwitch.SafeClick();
 
-                            if (newMessagePopUpSwitchSelected == "false") break;
+                            for (int i = 0; i < Timeout; i++)
+                            {
+                                newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']", 1);
+                                newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+
+                                if (newMessagePopUpSwitchSelected == "false") break;
+                            }
                         }
                     }
                 }
@@ -153,7 +157,6 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             WebElement chatSettings = new WebElement();
-            SafeClickResult safeClickResult;
 
             string sendMessageButtonText = sendMessageButtonChild.Item!.GetAttribute("aria-label").ToLower();
 
@@ -272,8 +275,11 @@ namespace Magic.MarketplaceNET.Facebook
 
             Debug.WriteLine("ID chat adalah : " + facebookChatId);
 
+            Debug.WriteLine("Siap-siap fire event SendOfferSuccess");
 
             SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.SendOfferSuccess, listingURL, Chrome, facebookChatId));
+            
+            Debug.WriteLine("Done fire event SendOfferSuccess");
 
             #endregion
 

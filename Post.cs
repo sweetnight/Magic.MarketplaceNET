@@ -1065,6 +1065,7 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 WebElement atagLanjutkan = Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='lanjut'])[1]/ancestor::a", Timeout);
 
+                // disini objek null. akun selly agustin
                 string listingLink = atagLanjutkan.Item!.GetAttribute("href");
                 ListingID = ExtractListingIDFromHref(listingLink);
 
