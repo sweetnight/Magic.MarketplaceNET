@@ -146,6 +146,8 @@ namespace Magic.MarketplaceNET.Facebook
 
             #region SEND OFFER MESSAGE
 
+            SafeSendKeysResult safeSendKeysResult;
+
             WebElement sendMessageButtonChild = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='kirim pesan' and @role='button']|(//div[{Chrome.ToLower("@aria-label")}='kirim pesan lagi' and @role='button'])[2]", Timeout);
 
             //div[@aria-label='Kirim pesan' and @role='button']/ancestor::div[1]|(//div[@aria-label='Kirim Pesan Lagi' and @role='button'])[2]/ancestor::div[1]
@@ -155,6 +157,8 @@ namespace Magic.MarketplaceNET.Facebook
                 SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.NoSendMessageButton, listingURL, Chrome));
                 return false;
             }
+
+            Chrome.ScrollToElement(sendMessageButtonChild);
 
             WebElement chatSettings = new WebElement();
 
@@ -179,7 +183,7 @@ namespace Magic.MarketplaceNET.Facebook
                 // baca popup dialog kirim pesan
                 WebElement textAreaInDialog = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'kirim pesan')]//textarea", Timeout);
 
-                SafeSendKeysResult safeSendKeysResult = new SafeSendKeysResult();
+                safeSendKeysResult = new SafeSendKeysResult();
 
                 safeSendKeysResult = textAreaInDialog.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
 
@@ -231,7 +235,7 @@ namespace Magic.MarketplaceNET.Facebook
                     return false;
                 }
 
-                SafeSendKeysResult safeSendKeysResult = pesanTextBox.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
+                safeSendKeysResult = pesanTextBox.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
 
                 if (!safeSendKeysResult.Status)
                 {
