@@ -756,6 +756,9 @@ namespace Magic.MarketplaceNET.Facebook
             }
             else
             {
+                // Console.WriteLine("Refresh untuk menghilangkan dialog promosikan tawaran");
+                Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
+
                 //WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"((((//div[{Chrome.ToLower("@aria-label")}='{listingInputs.Title!.ToLower()}'])[2]/../../../../../../div/div/div/div)[2]/div/div)[2]/div/div)[last()]/div/div");
                 WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"(//div[@role='button' and not(.//div[contains(@class, '__fb-light-mode')]) and @aria-label='Opsi lainnya untuk {listingInputs.Title}' and .//i[@data-visualcompletion='css-img' and contains(@style, 'background-image: url(') and contains(@style, 'width: 16px; height: 16px;')]])[1]");
 
@@ -1173,7 +1176,7 @@ namespace Magic.MarketplaceNET.Facebook
             PostEvent?.Invoke(new PostEventEventArgs(EventType.GoingToPostedItemListingsPage, listingInputs!, Chrome));
 
             // Console.WriteLine("Refresh untuk menghilangkan dialog promosikan tawaran");
-            Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
+            //Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
 
             // Sudah berhasil publish, namun apakah sudah terload
 
@@ -1291,6 +1294,9 @@ namespace Magic.MarketplaceNET.Facebook
 
                 Thread.Sleep(1000);
             }
+
+            // Console.WriteLine("Refresh untuk menghilangkan dialog promosikan tawaran");
+            //Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.EditForLabelAndPriceSuccess, listingInputs!, Chrome, listingLink));
 
