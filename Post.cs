@@ -560,7 +560,8 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingPromotion, listingInputs, Chrome));
 
-            WebElement promosikanTawaranCheck = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'promosikan tawaran')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']", Timeout);
+            //WebElement promosikanTawaranCheck = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'promosikan tawaran')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']", Timeout);
+            WebElement promosikanTawaranCheck = Chrome.FindElementByXPath($"//div[@role='button']//div[contains({Chrome.ToLower(".")}, 'promosikan tawaran setelah')]/following-sibling::div//input[@aria-label]", Timeout);
 
             if (promosikanTawaranCheck.State)
             {
@@ -593,13 +594,15 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingHideFromFriends, listingInputs, Chrome));
 
-            WebElement sembunyikanCheck = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'sembunyikan dari teman')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']", Timeout);
+            //WebElement sembunyikanCheck = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'sembunyikan dari teman')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']", Timeout);
+            WebElement sembunyikanCheck = Chrome.FindElementByXPath($"//div[@role='button']//div[contains({Chrome.ToLower(".")}, 'sembunyikan dari teman')]/following-sibling::div//input[@aria-label]", Timeout);
             WebElement sembunyikanCheckForClick;
 
             if (sembunyikanCheck.State)
             {
                 string sembunyikanPosition = sembunyikanCheck.Item!.GetAttribute("aria-checked");
-                sembunyikanCheckForClick = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'sembunyikan dari teman')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']/../../../..", Timeout);
+                //sembunyikanCheckForClick = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'sembunyikan dari teman')]/../../../../..//input[{Chrome.ToLower("@aria-label")}='diaktifkan']/../../../..", Timeout);
+                sembunyikanCheckForClick = Chrome.FindElementByXPath($"//div[@role='button' and .//div[contains({Chrome.ToLower(".")}, 'sembunyikan dari teman')]]", Timeout);
 
                 // bisa saja pakai 1 if, lalu pake OR. Tapi lebih mudah terbaca seperti dibawah ini
                 if ((sembunyikanPosition == "false" && listingInputs.Hide) ||
@@ -764,52 +767,60 @@ namespace Magic.MarketplaceNET.Facebook
 
                 //((((//div[@aria-label='Lampu Led Motor Bebek Super Terang'])[2]/../../../../../../div/div/div/div)[2]/div/div)[2]/div/div)[last()]/div/div
 
-                safeClickResult = firstThreeDotSymbol.SafeClick(5);
-
-                //Thread.Sleep(2000);
-
-                WebElement listingLinkElement = new WebElement();
-
-                bool titikTigaClicked = false;
-
-                // untuk internet yang lambat, setelah klik titik tiga akan tidak muncul elemen lain. Jadi harus direfresh
-                for (int i = 0; i < 5; i++)
+                if (firstThreeDotSymbol.State)
                 {
-                    listingLinkElement = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, 'lihat tawaran')]/ancestor::a)[1]", Timeout);
+                    safeClickResult = firstThreeDotSymbol.SafeClick(5);
 
-                    if (listingLinkElement.State)
+                    //Thread.Sleep(2000);
+
+                    WebElement listingLinkElement = new WebElement();
+
+                    bool titikTigaClicked = false;
+
+                    // untuk internet yang lambat, setelah klik titik tiga akan tidak muncul elemen lain. Jadi harus direfresh
+                    for (int i = 0; i < 5; i++)
                     {
-                        titikTigaClicked = true;
-                        break;
+                        listingLinkElement = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, 'lihat tawaran')]/ancestor::a)[1]", Timeout);
+
+                        if (listingLinkElement.State)
+                        {
+                            titikTigaClicked = true;
+                            break;
+                        }
+
+                        Thread.Sleep(2000);
+
+                        Chrome.Refresh();
                     }
 
-                    Thread.Sleep(2000);
+                    // seandainya metode titik tiga tidak berhasil
+                    if (titikTigaClicked)
+                    {
+                        listingLink = listingLinkElement.Item!.GetAttribute("href");
+                    }
+                    else
+                    {
+                        // ini jika gambar sudah terupload. Listing sudah ada gambar produknya.
+                        WebElement imageUploaded = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='{listingInputs.Title!.ToLower()}'])[1]", Timeout);
 
-                    Chrome.Refresh();
-                }
+                        //(//div[@aria-label='Lampu Led Motor Bebek Super Terang'])[1]
 
-                // seandainya metode titik tiga tidak berhasil
-                if (titikTigaClicked)
-                {
-                    listingLink = listingLinkElement.Item!.GetAttribute("href");
+                        safeClickResult = imageUploaded.SafeClick(5);
+
+                        listingLinkElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='penawaran anda']/../../../../..//a");
+
+                        listingLink = listingLinkElement.Item!.GetAttribute("href");
+
+                        Chrome.Refresh();
+                    }
+
+                    ListingID = ExtractListingIDFromHref(listingLink);
                 }
                 else
                 {
-                    // ini jika gambar sudah terupload. Listing sudah ada gambar produknya.
-                    WebElement imageUploaded = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='{listingInputs.Title!.ToLower()}'])[1]", Timeout);
-
-                    //(//div[@aria-label='Lampu Led Motor Bebek Super Terang'])[1]
-
-                    safeClickResult = imageUploaded.SafeClick(5);
-
-                    listingLinkElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='penawaran anda']/../../../../..//a");
-
-                    listingLink = listingLinkElement.Item!.GetAttribute("href");
-
-                    Chrome.Refresh();
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.PostLimited, listingInputs, Chrome));
+                    return;
                 }
-
-                ListingID = ExtractListingIDFromHref(listingLink);
             }
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.PostedItemListingLinkRetrieved, listingInputs, Chrome, listingLink));
@@ -1161,14 +1172,25 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             WebPage currentUrl;
+            bool keepLoading = true;
 
             for (int i = 0; i < Timeout; i++)
             {
                 currentUrl = Chrome.GetCurrentUrl();
 
-                if (currentUrl.Url.Contains(".facebook.com/marketplace/you/selling")) break;
+                if (currentUrl.Url.Contains(".facebook.com/marketplace/you/selling"))
+                {
+                    keepLoading = false;
+                    break;
+                }
 
                 Thread.Sleep(1000);
+            }
+
+            if (keepLoading)
+            {
+                // jika terus loading, langsung saja ke daftar tawaran
+                Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
             }
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.PublishButtonClicked, listingInputs!, Chrome));
