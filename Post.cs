@@ -159,6 +159,9 @@ namespace Magic.MarketplaceNET.Facebook
 
         public CancellationToken CancellationToken { get; set; }
 
+        bool lastAvailabilityInputExists { get; set; } = true;
+        bool lastSKUInputExists { get; set; } = true;
+
         #endregion
 
         public Post(ListingInputs listingInputs, bool identical, Chrome chrome, int timeout, CancellationToken cancellationToken)
@@ -430,22 +433,31 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingAvailability, listingInputs, Chrome));
 
-            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='ketersediaan']/../../..", Timeout);
-            safeClickResult = pilihanKetersediaanElement.SafeClick();
+            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='ketersediaan']/../../..", 1);
 
-            if (!safeClickResult.Status)
+            if(pilihanKetersediaanElement.State)
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickAvailabilityFailed, listingInputs, Chrome));
-                return;
+                safeClickResult = pilihanKetersediaanElement.SafeClick();
+
+                if (!safeSendKeysResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickAvailabilityFailed, listingInputs, Chrome));
+                    return;
+                }
+
+
+                WebElement pilihanKetersediaanItem = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, '{listingInputs.Availability!.ToLower()}')])[1]", Timeout);
+                safeClickResult = pilihanKetersediaanItem.SafeClick();
+
+                if (!safeClickResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectAvailabilityFailed, listingInputs, Chrome));
+                    return;
+                }
             }
-
-            WebElement pilihanKetersediaanItem = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, '{listingInputs.Availability!.ToLower()}')])[1]", Timeout);
-            safeClickResult = pilihanKetersediaanItem.SafeClick();
-
-            if (!safeClickResult.Status)
+            else
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectAvailabilityFailed, listingInputs, Chrome));
-                return;
+                lastAvailabilityInputExists = false;
             }
 
             Thread.Sleep(2000);
@@ -475,15 +487,21 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingSKU, listingInputs, Chrome));
 
-            WebElement inputSKUElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='sku']//input[@type='text']", Timeout);
-            //Magic.Helper.PutContentToClipboard(listingInputs.sku);
-            //safeSendKeysResult = inputSKUElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
-            safeSendKeysResult = inputSKUElement.SafeCopyAndPaste(listingInputs.SKU!);
+            WebElement inputSKUElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='sku']//input[@type='text']", 1);
 
-            if (!safeSendKeysResult.Status)
+            if (inputSKUElement.State)
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.InputSKUFailed, listingInputs, Chrome));
-                return;
+                safeSendKeysResult = inputSKUElement.SafeCopyAndPaste(listingInputs.SKU!);
+
+                if (!safeSendKeysResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.InputSKUFailed, listingInputs, Chrome));
+                    return;
+                }
+            }
+            else
+            {
+                lastSKUInputExists = false;
             }
 
             Thread.Sleep(2000);
@@ -1093,6 +1111,9 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             // Proses edit draft listing
+            
+            // REINPUT TITLE
+            
             PostEvent?.Invoke(new PostEventEventArgs(EventType.ReinputtingTitle, listingInputs!, Chrome));
 
             WebElement inputJudulElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='judul']//input[@type='text']", Timeout);
@@ -1102,6 +1123,61 @@ namespace Magic.MarketplaceNET.Facebook
             SafeSendKeysResult safeSendKeysResult = inputJudulElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
             //safeSendKeysResult = inputJudulElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
             safeSendKeysResult = inputJudulElement.SafeCopyAndPaste(listingInputs!.Title!);
+
+            // REINPUT AVAILABILITY (if last one not exist)
+
+            SafeClickResult safeClickResult;
+
+            if (!lastAvailabilityInputExists)
+            {
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingAvailability, listingInputs, Chrome));
+
+                WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='ketersediaan']/../../..", 1);
+
+                if (pilihanKetersediaanElement.State)
+                {
+                    safeClickResult = pilihanKetersediaanElement.SafeClick();
+
+                    if (!safeSendKeysResult.Status)
+                    {
+                        PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickAvailabilityFailed, listingInputs, Chrome));
+                        return false;
+                    }
+
+
+                    WebElement pilihanKetersediaanItem = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, '{listingInputs.Availability!.ToLower()}')])[1]", Timeout);
+                    safeClickResult = pilihanKetersediaanItem.SafeClick();
+
+                    if (!safeClickResult.Status)
+                    {
+                        PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectAvailabilityFailed, listingInputs, Chrome));
+                        return false;
+                    }
+                }
+                else
+                {
+                }
+            }
+
+            // REINPUT SKU (if last one not exist)
+
+            if(!lastSKUInputExists && !string.IsNullOrWhiteSpace(listingInputs.SKU))
+            {
+                WebElement inputSKUElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='sku']//input[@type='text']", 1);
+
+                if (inputSKUElement.State)
+                {
+                    safeSendKeysResult = inputSKUElement.SafeCopyAndPaste(listingInputs.SKU!);
+
+                    if (!safeSendKeysResult.Status)
+                    {
+                        PostEvent?.Invoke(new PostEventEventArgs(EventType.InputSKUFailed, listingInputs, Chrome));
+                        return false;
+                    }
+                }
+            }
+
+            // REINPUT LOCATION
 
             InputLocation();
 
