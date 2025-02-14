@@ -256,7 +256,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingTitle, listingInputs, Chrome));
 
-            WebElement inputJudulElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")} = 'judul']//input[@type='text']", Timeout);
+            WebElement inputJudulElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")} = 'judul']]//input[@type='text']", Timeout);
 
             if (Identical)
             {
@@ -292,7 +292,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingPrice, listingInputs, Chrome));
 
-            WebElement inputHargaElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='harga']//input[@type='text']", Timeout);
+            WebElement inputHargaElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='harga']]//input[@type='text']", Timeout);
 
             int price = listingInputs.StrikethroughPrice > listingInputs.Price ? listingInputs.StrikethroughPrice : listingInputs.Price;
 
@@ -320,7 +320,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingCategory, listingInputs, Chrome));
 
-            WebElement pilihanKategoriElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='kategori']/../../..", Timeout);
+            WebElement pilihanKategoriElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='kategori']/../../..", Timeout);
             SafeClickResult safeClickResult = pilihanKategoriElement.SafeClick();
             //pilihanKategoriElement.ClickJs();
 
@@ -365,7 +365,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             for (int i = 0; i < Timeout; i++)
             {
-                pilihanKondisiElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='kondisi']/../../..", Timeout);
+                pilihanKondisiElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='kondisi']/../../..", Timeout);
                 safeClickResult = pilihanKondisiElement.SafeClick();
 
                 if (!safeClickResult.Status)
@@ -408,7 +408,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingDescription, listingInputs, Chrome));
 
-            WebElement inputKeteranganElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='keterangan']//textarea", Timeout);
+            WebElement inputKeteranganElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='keterangan']]//textarea", Timeout);
             //Magic.Helper.PutContentToClipboard(listingInputs.description);
             //safeSendKeysResult = inputKeteranganElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
             safeSendKeysResult = inputKeteranganElement.SafeCopyAndPaste(listingInputs.Description!);
@@ -433,7 +433,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingAvailability, listingInputs, Chrome));
 
-            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='ketersediaan']/../../..", 1);
+            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='ketersediaan']/../../..", 1);
 
             if(pilihanKetersediaanElement.State)
             {
@@ -487,7 +487,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingSKU, listingInputs, Chrome));
 
-            WebElement inputSKUElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='sku']//input[@type='text']", 1);
+            WebElement inputSKUElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='sku']//input[@type='text']", 1);
 
             if (inputSKUElement.State)
             {
@@ -871,7 +871,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs, Chrome));
 
-            WebElement inputLokasiElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='lokasi']//input[@type='text']", Timeout);
+            WebElement inputLokasiElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='lokasi']]//input[@type='text']", Timeout);
             SafeClickResult safeClickResult = inputLokasiElement.SafeClick();
 
             if (!safeClickResult.Status)
@@ -931,7 +931,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingLabel, listingInputs!, Chrome));
 
-            WebElement labelElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='label produk']//textarea", Timeout);
+            WebElement labelElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='label produk']]//textarea", Timeout);
 
             //Magic.Helper.PutContentToClipboard(listingInputs.tags);
             //SafeSendKeysResult safeSendKeysResult = labelElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
@@ -1116,7 +1116,7 @@ namespace Magic.MarketplaceNET.Facebook
             
             PostEvent?.Invoke(new PostEventEventArgs(EventType.ReinputtingTitle, listingInputs!, Chrome));
 
-            WebElement inputJudulElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='judul']//input[@type='text']", Timeout);
+            WebElement inputJudulElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='judul']]//input[@type='text']", Timeout);
 
             //Magic.Helper.PutContentToClipboard(listingInputs.Title);
 
@@ -1132,7 +1132,7 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingAvailability, listingInputs, Chrome));
 
-                WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='ketersediaan']/../../..", 1);
+                WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='ketersediaan']/../../..", 1);
 
                 if (pilihanKetersediaanElement.State)
                 {
@@ -1163,7 +1163,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             if(!lastSKUInputExists && !string.IsNullOrWhiteSpace(listingInputs.SKU))
             {
-                WebElement inputSKUElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='sku']//input[@type='text']", 1);
+                WebElement inputSKUElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("@aria-label")}='sku']]//input[@type='text']", 1);
 
                 if (inputSKUElement.State)
                 {
@@ -1328,7 +1328,7 @@ namespace Magic.MarketplaceNET.Facebook
 
                 // check title apakah masih belum sempurna
 
-                WebElement inputJudulElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='judul']//input[@type='text']", Timeout);
+                WebElement inputJudulElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='judul']]//input[@type='text']", Timeout);
 
                 //Magic.Helper.PutContentToClipboard(listingInputs.Title);
 
@@ -1349,7 +1349,7 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 PostEvent?.Invoke(new PostEventEventArgs(EventType.EditingForStrikethroughPrice, listingInputs!, Chrome, listingLink));
 
-                WebElement inputHargaElement = Chrome.FindElementByXPath($"//label[{Chrome.ToLower("@aria-label")}='harga']//input[@type='text']", Timeout);
+                WebElement inputHargaElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='harga']]//input[@type='text']", Timeout);
 
                 inputHargaElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
                 safeSendKeysResult = inputHargaElement.SafeCopyAndPaste(listingInputs!.Price.ToString());
