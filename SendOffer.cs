@@ -203,8 +203,8 @@ namespace Magic.MarketplaceNET.Facebook
                     return false;
                 }
 
-                //chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
-                chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
+                chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                //chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
 
                 if (!chatSettings.State)
                 {
@@ -253,8 +253,8 @@ namespace Magic.MarketplaceNET.Facebook
 
                 Thread.Sleep(3000);
 
-                //chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
-                chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
+                chatSettings = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']", Timeout);
+                //chatSettings = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'percakapan') and @role='button' and .//img]/following-sibling::div[1]", Timeout);
             }
 
             #endregion
