@@ -1034,7 +1034,7 @@ namespace Magic.MarketplaceNET.Facebook
             {
                 // tidak ada kepastian halaman selesai direfresh, jadi langsung pakai timeout untuk batas waktunya
 
-                lanjutkanButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='{TitleDraft!.ToLower()}'])[2]/..//span[{Chrome.ToLower("text()")}='lanjut']", Timeout);
+                lanjutkanButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='{TitleDraft!.ToLower()}'])[2]/..//span[{Chrome.ToLower("text()")}='lanjut']|(//div[{Chrome.ToLower("@aria-label")}='{TitleDraft!.ToLower()}'])[2]/..//span[{Chrome.ToLower("text()")}='lanjutkan']", Timeout);
 
                 if (lanjutkanButton.State)
                 {
@@ -1066,7 +1066,7 @@ namespace Magic.MarketplaceNET.Facebook
                 for (int i = 0; i < Timeout / 4; i++)
                 {
                     // pastikan halaman sudah ter-load
-                    Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='lanjut'])[1]", Timeout);
+                    Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='lanjut'])[1]|(//span[{Chrome.ToLower("text()")}='lanjutkan'])[1]", Timeout);
 
                     // ini jika gambar sudah terupload. Listing sudah ada gambar produknya.
                     imageUploaded = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='{TitleDraft!.ToLower()}'])[1]//img", 1);
@@ -1095,7 +1095,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             try
             {
-                WebElement atagLanjutkan = Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='lanjut'])[1]/ancestor::a", Timeout);
+                WebElement atagLanjutkan = Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='lanjut'])[1]/ancestor::a|(//span[{Chrome.ToLower("text()")}='lanjutkan'])[1]/ancestor::a", Timeout);
 
                 // disini objek null. akun selly agustin
                 string listingLink = atagLanjutkan.Item!.GetAttribute("href");
