@@ -69,7 +69,7 @@ namespace Magic.MarketplaceNET.Facebook
 
         } // end of method
 
-        public bool Start(string chatMessage)
+        public bool Start(string chatMessage, bool newOpenChat = true)
         {
 
             ChatEvent?.Invoke(new ChatEventArgs(EventType.StartChat, FacebookChatId, Chrome));
@@ -79,7 +79,10 @@ namespace Magic.MarketplaceNET.Facebook
                 ChatEvent?.Invoke(new ChatEventArgs(EventType.ChatMessageIsEmpty, FacebookChatId, Chrome));
             }
 
-            Chrome.Navigate($"https://www.facebook.com/messages/t/{this.FacebookChatId}/");
+            if(newOpenChat)
+            {
+                Chrome.Navigate($"https://www.facebook.com/messages/t/{this.FacebookChatId}/");
+            }
 
             WebElement messageTextBox = new WebElement();
             
