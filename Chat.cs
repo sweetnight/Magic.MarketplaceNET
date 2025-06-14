@@ -118,7 +118,14 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             // digunakan untuk menunggu flickr loading halaman
-            Thread.Sleep(3000);
+            if(newOpenChat)
+            {
+                Thread.Sleep(3000);
+            }
+            else
+            {
+                //Thread.Sleep(1000);
+            }
 
             Magic.HelperNET.PutContentToClipboard(chatMessage);
 
@@ -138,7 +145,8 @@ namespace Magic.MarketplaceNET.Facebook
                 return false;
             }
 
-            Thread.Sleep(3000);
+            // sebelum chrome ditutup (versi magic < 8.5.0) supaya terlihat dulu hasil chat nya
+            //Thread.Sleep(1000);
 
             ChatEvent?.Invoke(new ChatEventArgs(EventType.ChatSuccess, FacebookChatId, Chrome));
 

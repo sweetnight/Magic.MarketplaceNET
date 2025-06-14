@@ -96,11 +96,14 @@ namespace Magic.MarketplaceNET.Facebook
 
                 if (optionButtonSafeClick.Status)
                 {
-                    WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']");
+                    string popUpSwitchXpath = $"//div[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='menuitemcheckbox']";
+
+                    WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath);
+                    //WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//div[contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pop-up pesan') and @role='menuitemcheckbox']");
 
                     if (newMessagePopUpSwitch.State)
                     {
-                        string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+                        string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
                         if (newMessagePopUpSwitchSelected == "true")
                         {
@@ -108,8 +111,8 @@ namespace Magic.MarketplaceNET.Facebook
 
                             for (int i = 0; i < Timeout; i++)
                             {
-                                newMessagePopUpSwitch = Chrome.FindElementByXPath($"//input[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='switch']", 1);
-                                newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("checked");
+                                newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, 1);
+                                newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
                                 if (newMessagePopUpSwitchSelected == "false") break;
                             }
@@ -276,6 +279,9 @@ namespace Magic.MarketplaceNET.Facebook
 
             Match match = Regex.Match(chatUrl, pattern);
             long facebookChatId = Convert.ToInt64(match.Groups[1].Value);
+
+            // tutup lagi chat settings
+            safeClickResult = chatSettings.SafeClick();
 
             Debug.WriteLine("ID chat adalah : " + facebookChatId);
 
