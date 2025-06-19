@@ -22,19 +22,20 @@ namespace Magic.MarketplaceNET.Facebook
             }
 
             public static EventType TurningOffMessagePopup { get; } = new EventType(1, "Start Sending Offer");
-            public static EventType StartSendingOffer { get; } = new EventType(1, "Start Sending Offer");
-            public static EventType OfferMessageIsEmpty { get; } = new EventType(2, "Message untuk penawaran isinya kosong");
-            public static EventType AccountCheckpoint { get; } = new EventType(3, "Akun checkpoint");
-            public static EventType MPBanned { get; } = new EventType(3, "Akun tidak punya MP alias banned atau tidak aktif");
-            public static EventType UnavailableProduct { get; } = new EventType(4, "Sudah membuka URL tawaran tapi tawaran tidak tersedia");
-            public static EventType NoSendMessageButton { get; } = new EventType(5, "Tombol kirim pesan / kirim pesan lagi tidak ditemukan");
-            public static EventType SendMessageButtonClickFailed { get; } = new EventType(6, "Gagal klik tombol kirim pesan");
-            public static EventType PasteMessageFailed { get; } = new EventType(7, "Gagal paste text kirim pesan");
-            public static EventType NoSendMessageAgainTextBox { get; } = new EventType(8, "Pesan text box tidak muncul untuk kirim pesan lagi.");
-            public static EventType NoOpenInMessengerLink { get; } = new EventType(8, "Link open di messenger gak ditemukan.");
-            public static EventType SendEnterButtonFailed { get; } = new EventType(9, "Gagal enter text kirim pesan");
-            public static EventType SendOfferLimit { get; } = new EventType(10, "Akun boost mencapai limit untuk send offer");
-            public static EventType SendOfferSuccess { get; } = new EventType(11, "Send first offer success");
+            public static EventType StartSendingOffer { get; } = new EventType(2, "Start Sending Offer");
+            public static EventType OfferMessageIsEmpty { get; } = new EventType(3, "Message untuk penawaran isinya kosong");
+            public static EventType AccountCheckpoint { get; } = new EventType(4, "Akun checkpoint");
+            public static EventType MPBanned { get; } = new EventType(5, "Akun tidak punya MP alias banned atau tidak aktif");
+            public static EventType UnavailableProduct { get; } = new EventType(6, "Sudah membuka URL tawaran tapi tawaran tidak tersedia");
+            public static EventType MelanggarPeraturan { get; } = new EventType(7, "Tombol kirim pesan / kirim pesan lagi tidak ditemukan");
+            public static EventType NoSendMessageButton { get; } = new EventType(8, "Tombol kirim pesan / kirim pesan lagi tidak ditemukan");
+            public static EventType SendMessageButtonClickFailed { get; } = new EventType(9, "Gagal klik tombol kirim pesan");
+            public static EventType PasteMessageFailed { get; } = new EventType(10, "Gagal paste text kirim pesan");
+            public static EventType NoSendMessageAgainTextBox { get; } = new EventType(11, "Pesan text box tidak muncul untuk kirim pesan lagi.");
+            public static EventType NoOpenInMessengerLink { get; } = new EventType(12, "Link open di messenger gak ditemukan.");
+            public static EventType SendEnterButtonFailed { get; } = new EventType(13, "Gagal enter text kirim pesan");
+            public static EventType SendOfferLimit { get; } = new EventType(14, "Akun boost mencapai limit untuk send offer");
+            public static EventType SendOfferSuccess { get; } = new EventType(15, "Send first offer success");
 
         } // end of class
 
@@ -157,7 +158,17 @@ namespace Magic.MarketplaceNET.Facebook
 
             if (!sendMessageButtonChild.State)
             {
-                SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.NoSendMessageButton, listingURL, Chrome));
+                WebElement melanggarPeraturanSpan = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'melanggar peraturan')]", 1);
+
+                if (melanggarPeraturanSpan.State)
+                {
+                    SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.MelanggarPeraturan, listingURL, Chrome));
+                }
+                else
+                {
+                    SendOfferEvent?.Invoke(new SendOfferEventArgs(EventType.NoSendMessageButton, listingURL, Chrome));
+                }
+
                 return false;
             }
 
