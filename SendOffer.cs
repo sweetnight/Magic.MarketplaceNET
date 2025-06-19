@@ -91,9 +91,18 @@ namespace Magic.MarketplaceNET.Facebook
 
             if (safeClickResult.Status)
             {
-                WebElement optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                WebElement optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati'])|//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
 
-                SafeClickResult optionButtonSafeClick = optionButton.SafeClick();
+                SafeClickResult optionButtonSafeClick;
+
+                if (optionButton.Item!.Text.ToLower().Contains("lewati"))
+                {
+                    // disini ada bidang elemen yang menawarkan membuat PIN messenger, klik lewati, lalu ambil lagi optionButton 
+                    optionButtonSafeClick = optionButton.SafeClick();
+                    optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                }
+
+                optionButtonSafeClick = optionButton.SafeClick();
 
                 if (optionButtonSafeClick.Status)
                 {
@@ -104,18 +113,21 @@ namespace Magic.MarketplaceNET.Facebook
 
                     if (newMessagePopUpSwitch.State)
                     {
-                        string newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+                        string? newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
-                        if (newMessagePopUpSwitchSelected == "true")
+                        if (newMessagePopUpSwitchSelected != null && newMessagePopUpSwitchSelected == "true")
                         {
-                            newMessagePopUpSwitch.SafeClick();
+                            SafeClickResult newMessagePopUpSwitchClicked = newMessagePopUpSwitch.SafeClick();
 
-                            for (int i = 0; i < Timeout; i++)
+                            if (newMessagePopUpSwitchClicked.Status)
                             {
-                                newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, 1);
-                                newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+                                for (int i = 0; i < Timeout; i++)
+                                {
+                                    newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, 1);
+                                    newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
-                                if (newMessagePopUpSwitchSelected == "false") break;
+                                    if (newMessagePopUpSwitchSelected == "false") break;
+                                }
                             }
                         }
                     }
