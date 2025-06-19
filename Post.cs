@@ -145,9 +145,9 @@ namespace Magic.MarketplaceNET.Facebook
 
         #region INTERNALS
 
-        private ListingInputs listingInputs { get; set; }
+        private ListingInputs? listingInputs { get; set; }
         private bool Identical { get; set; } = false;
-        private Chrome Chrome { get; set; }
+        private Chrome? Chrome { get; set; }
         private int Timeout { get; set; } = 10;
 
         bool AfterPublishResult { get; set; } = false;
@@ -164,6 +164,11 @@ namespace Magic.MarketplaceNET.Facebook
 
         #endregion
 
+        public Post()
+        {
+
+        } // end of method
+
         public Post(ListingInputs listingInputs, bool identical, Chrome chrome, int timeout, CancellationToken cancellationToken)
         {
 
@@ -177,9 +182,9 @@ namespace Magic.MarketplaceNET.Facebook
 
         public void Start()
         {
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.StartPosting, listingInputs!, Chrome));
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.StartPosting, listingInputs!, Chrome!));
 
-            Chrome.Navigate("https://www.facebook.com/marketplace/create/item");
+            Chrome!.Navigate("https://www.facebook.com/marketplace/create/item");
 
             #region CHECK ACTIVE ACCOUNT
 
@@ -869,14 +874,14 @@ namespace Magic.MarketplaceNET.Facebook
         private void InputLocation()
         {
 
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs, Chrome));
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs!, Chrome!));
 
-            WebElement inputLokasiElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='lokasi']]//input[@type='text']", Timeout);
+            WebElement inputLokasiElement = Chrome!.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='lokasi']]//input[@type='text']", Timeout);
             SafeClickResult safeClickResult = inputLokasiElement.SafeClick();
 
             if (!safeClickResult.Status)
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickLocationFailed, listingInputs, Chrome));
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickLocationFailed, listingInputs!, Chrome));
                 return;
             }
 
@@ -884,7 +889,7 @@ namespace Magic.MarketplaceNET.Facebook
             inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
             inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Delete);
             //safeSendKeysResult = inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
-            SafeSendKeysResult safeSendKeysResult = inputLokasiElement.SafeCopyAndPaste(listingInputs.Location!);
+            SafeSendKeysResult safeSendKeysResult = inputLokasiElement.SafeCopyAndPaste(listingInputs!.Location!);
 
             if (!safeSendKeysResult.Status)
             {
@@ -929,9 +934,9 @@ namespace Magic.MarketplaceNET.Facebook
             // labels kosong, langsung return true saja
             if (listingInputs!.Tags == "") return true;
 
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingLabel, listingInputs!, Chrome));
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.InputtingLabel, listingInputs!, Chrome!));
 
-            WebElement labelElement = Chrome.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='label produk']]//textarea", Timeout);
+            WebElement labelElement = Chrome!.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='label produk']]//textarea", Timeout);
 
             //Magic.Helper.PutContentToClipboard(listingInputs.tags);
             //SafeSendKeysResult safeSendKeysResult = labelElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
@@ -953,13 +958,13 @@ namespace Magic.MarketplaceNET.Facebook
         {
 
             // KLIK SIMPAN DRAF
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.SavingDraftStart, listingInputs!, Chrome));
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.SavingDraftStart, listingInputs!, Chrome!));
 
             WebElement simpanDrafButton = new WebElement();
 
             for (int i = Timeout - 1; i >= 0; i--)
             {
-                simpanDrafButton = Chrome.FindElementByXPath($"//div[@aria-disabled='true' and {Chrome.ToLower("@aria-label")}='simpan draf']", 1);
+                simpanDrafButton = Chrome!.FindElementByXPath($"//div[@aria-disabled='true' and {Chrome.ToLower("@aria-label")}='simpan draf']", 1);
 
                 if (simpanDrafButton.State)
                 {
@@ -974,11 +979,11 @@ namespace Magic.MarketplaceNET.Facebook
 
             if (simpanDrafButton.State)
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.NoSaveDraftButton, listingInputs!, Chrome));
+                PostEvent?.Invoke(new PostEventEventArgs(EventType.NoSaveDraftButton, listingInputs!, Chrome!));
                 return false;
             }
 
-            simpanDrafButton = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='simpan draf']", Timeout);
+            simpanDrafButton = Chrome!.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='simpan draf']", Timeout);
 
             if (!simpanDrafButton.State)
             {
@@ -1188,9 +1193,9 @@ namespace Magic.MarketplaceNET.Facebook
 
         public bool SelanjutnyaORTerbitkanClick()
         {
-            PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickingContinueButton, listingInputs!, Chrome));
+            PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickingContinueButton, listingInputs!, Chrome!));
 
-            WebElement selanjutnyaORTerbitkanButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='selanjutnya']|//div[{Chrome.ToLower("@aria-label")}='berikutnya']|//div[{Chrome.ToLower("@aria-label")}='terbitkan']|//div[{Chrome.ToLower("@aria-label")}='publikasikan']", Timeout);
+            WebElement selanjutnyaORTerbitkanButton = Chrome!.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='selanjutnya']|//div[{Chrome.ToLower("@aria-label")}='berikutnya']|//div[{Chrome.ToLower("@aria-label")}='terbitkan']|//div[{Chrome.ToLower("@aria-label")}='publikasikan']", Timeout);
 
             if (!selanjutnyaORTerbitkanButton.State)
             {
@@ -1318,7 +1323,7 @@ namespace Magic.MarketplaceNET.Facebook
         public bool EditListingForLabelAndPrice(string listingLink)
         {
 
-            Chrome.Navigate("https://www.facebook.com/marketplace/edit/?listing_id=" + ListingID.ToString());
+            Chrome!.Navigate("https://www.facebook.com/marketplace/edit/?listing_id=" + ListingID.ToString());
 
             SafeSendKeysResult safeSendKeysResult;
 
@@ -1402,7 +1407,7 @@ namespace Magic.MarketplaceNET.Facebook
 
         } // end of method
 
-        private long ExtractListingIDFromHref(string href)
+        public long ExtractListingIDFromHref(string href)
         {
             string listingId = string.Empty;
 

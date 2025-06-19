@@ -31,7 +31,8 @@ namespace Magic.MarketplaceNET.Facebook
             public static EventType NoMessageTextBox { get; } = new EventType(3, "Textbox untuk isi pesan tidak tersedia");
             public static EventType PasteMessageFailed { get; } = new EventType(4, "Gagal paste text kirim pesan");
             public static EventType SendEnterButtonFailed { get; } = new EventType(5, "Gagal enter text kirim pesan");
-            public static EventType ChatSuccess { get; } = new EventType(11, "Chat success");
+            public static EventType ChatSuccess { get; } = new EventType(6, "Chat success");
+            public static EventType ReviewSuccess { get; } = new EventType(7, "Review success");
 
         } // end of class
 
@@ -42,6 +43,14 @@ namespace Magic.MarketplaceNET.Facebook
             public EventType EventType { get; set; }
             public long FacebookChatId { get; set; }
             public Chrome? Chrome { get; set; }
+
+            public ChatEventArgs(EventType eventType, Chrome chrome)
+            {
+
+                this.EventType = eventType;
+                this.Chrome = chrome;
+
+            } // end of constructor method
 
             public ChatEventArgs(EventType eventType, long facebookChatId, Chrome chrome)
             {
@@ -151,6 +160,50 @@ namespace Magic.MarketplaceNET.Facebook
             ChatEvent?.Invoke(new ChatEventArgs(EventType.ChatSuccess, FacebookChatId, Chrome));
 
             return true;
+
+        } // end of method
+
+        public void Review(string PostedItemListingURL)
+        {
+
+            // url utk review, angka tersebut adalah ID jualannya
+            // https://www.facebook.com/marketplace/you/rate/3964658137115944/
+
+            Post post = new Post();
+            long listingID = post.ExtractListingIDFromHref(PostedItemListingURL);
+            string listingLink = "https://www.facebook.com/marketplace/you/rate/" + listingID + "/";
+
+            Chrome.Navigate(listingLink);
+
+            // ini bintang 5. jangan lupa pakai Chrome.ToLower()
+            //div[contains(@aria-label, 'pilih peringkat') and @role = 'radiogroup']//input[@type = 'radio' and contains(@aria-label, '5 dari 5 peringkat')]
+
+            WebElement fifthStar = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'pilih peringkat') and @role = 'radiogroup']//input[@type = 'radio' and contains({Chrome.ToLower("@aria-label")}, '5 dari 5 peringkat')]", Timeout);
+
+            SafeClickResult safeClickResult = fifthStar.SafeClick();
+
+            // ini tombol kirim
+            //div[@role='dialog' and contains(., 'Beri Peringkat')]//div[@role='button' and @aria-label='Kirim']
+
+            WebElement sendButton = Chrome.FindElementByXPath($"//div[@role='dialog' and contains({Chrome.ToLower(".")}, 'beri peringkat')]//div[@role='button' and {Chrome.ToLower("@aria-label")}='kirim']", Timeout);
+
+            safeClickResult = sendButton.SafeClick();
+
+            // ini setelah bintang dikirim, jangan lupa pakai Chrome.ToLower()
+            //div[contains(@aria-label, 'pesan dalam percakapan')]//span[not(.//span) and contains(., 'penilaian anda dikirim')]
+
+            //WebElement reviewSent = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower(".")}, 'pesan dalam percakapan')]//span[not(.//span) and contains({Chrome.ToLower(".")}, 'penilaian anda dikirim')]", Timeout);
+
+            WebPage currentPage = Chrome.GetCurrentUrl();
+
+            if (currentPage.Url.Contains("/marketplace/selling/"))
+            {
+                ChatEvent?.Invoke(new ChatEventArgs(EventType.ReviewSuccess, Chrome));
+            } 
+            else
+            {
+                Thread.Sleep(Timeout/2);
+            }
 
         } // end of method
 
