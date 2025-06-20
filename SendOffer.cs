@@ -94,42 +94,43 @@ namespace Magic.MarketplaceNET.Facebook
                 //WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|(//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1])[1])[1]", Timeout);
                 WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]", Timeout);
 
-                SafeClickResult optionButtonSafeClick;
-
-                Debug.WriteLine("SendOffer ==================== : optionButton text: " + optionButton.Item!.Text);
-
-                if (optionButton.Item!.Text != "" && optionButton.Item!.Text.ToLower().Contains("lewati"))
+                if (optionButton.Item != null)
                 {
-                    // disini ada bidang elemen yang menawarkan membuat PIN messenger, klik lewati, lalu ambil lagi optionButton 
-                    optionButtonSafeClick = optionButton.SafeClick();
-                    optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
-                }
+                    SafeClickResult optionButtonSafeClick;
 
-                optionButtonSafeClick = optionButton.SafeClick();
-
-                if (optionButtonSafeClick.Status)
-                {
-                    string popUpSwitchXpath = $"//div[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='menuitemcheckbox']";
-
-                    WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath);
-                    //WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//div[contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pop-up pesan') and @role='menuitemcheckbox']");
-
-                    if (newMessagePopUpSwitch.State)
+                    if (optionButton.Item.Text != "" && optionButton.Item.Text.ToLower().Contains("lewati"))
                     {
-                        string? newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+                        // disini ada bidang elemen yang menawarkan membuat PIN messenger, klik lewati, lalu ambil lagi optionButton 
+                        optionButtonSafeClick = optionButton.SafeClick();
+                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                    }
 
-                        if (newMessagePopUpSwitchSelected != null && newMessagePopUpSwitchSelected == "true")
+                    optionButtonSafeClick = optionButton.SafeClick();
+
+                    if (optionButtonSafeClick.Status)
+                    {
+                        string popUpSwitchXpath = $"//div[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='menuitemcheckbox']";
+
+                        WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath);
+                        //WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//div[contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pop-up pesan') and @role='menuitemcheckbox']");
+
+                        if (newMessagePopUpSwitch.State)
                         {
-                            SafeClickResult newMessagePopUpSwitchClicked = newMessagePopUpSwitch.SafeClick();
+                            string? newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
-                            if (newMessagePopUpSwitchClicked.Status)
+                            if (newMessagePopUpSwitchSelected != null && newMessagePopUpSwitchSelected == "true")
                             {
-                                for (int i = 0; i < Timeout; i++)
-                                {
-                                    newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, 1);
-                                    newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+                                SafeClickResult newMessagePopUpSwitchClicked = newMessagePopUpSwitch.SafeClick();
 
-                                    if (newMessagePopUpSwitchSelected == "false") break;
+                                if (newMessagePopUpSwitchClicked.Status)
+                                {
+                                    for (int i = 0; i < Timeout; i++)
+                                    {
+                                        newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, 1);
+                                        newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+
+                                        if (newMessagePopUpSwitchSelected == "false") break;
+                                    }
                                 }
                             }
                         }
