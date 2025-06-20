@@ -91,9 +91,12 @@ namespace Magic.MarketplaceNET.Facebook
 
             if (safeClickResult.Status)
             {
-                WebElement optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                //WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|(//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1])[1])[1]", Timeout);
+                WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]", Timeout);
 
                 SafeClickResult optionButtonSafeClick;
+
+                Debug.WriteLine("SendOffer ==================== : optionButton text: " + optionButton.Item!.Text);
 
                 if (optionButton.Item!.Text != "" && optionButton.Item!.Text.ToLower().Contains("lewati"))
                 {

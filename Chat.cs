@@ -68,6 +68,14 @@ namespace Magic.MarketplaceNET.Facebook
         private int Timeout { get; set; } = 10;
         public CancellationToken CancellationToken { get; set; }
 
+        public Chat(Chrome chrome, int timeout)
+        {
+
+            Chrome = chrome;
+            Timeout = timeout;
+
+        } // end of method
+
         public Chat(long facebookChatId, Chrome chrome, int timeout, CancellationToken cancellationToken)
         {
 
@@ -98,26 +106,13 @@ namespace Magic.MarketplaceNET.Facebook
             for(int i = 0; i < 2; i++)
             {
                 //messageTextBox = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pesan' and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']", Timeout);
-                messageTextBox = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'tulis ke') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[contains({Chrome.ToLower("@aria-label")}, 'pesan') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']", Timeout);
+                messageTextBox = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'tulis ke') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[contains({Chrome.ToLower("@aria-label")}, 'pesan') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[{Chrome.ToLower("@aria-label")}='terima' and @role='button'][.//span[{Chrome.ToLower("normalize-space(.)")}='terima']]", Timeout);
 
                 if (!messageTextBox.State)
                 {
                     Chrome.Refresh();
                     continue;
                 }
-            }
-
-            // disini sudah loading sepenuhnya
-            // mesti cek jendela pin/kode sinkronisasi, kasih waktu 3 detik saja
-
-            WebElement pinRequestDialogCloseButton = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'menyinkronkan')]/ancestor::div[@role='dialog']//div[{Chrome.ToLower("@aria-label")}='tutup' and @role='button']", 3);
-
-            if(pinRequestDialogCloseButton.State)
-            {
-                pinRequestDialogCloseButton.SafeClick();
-
-                WebElement confirmationDialog = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("text()")}, 'jangan sinkronkan')]/ancestor::div[{Chrome.ToLower("@aria-label")}='jangan sinkronkan' and @role='button' and not(@aria-disabled='true')]", Timeout);
-                confirmationDialog.SafeClick();
             }
 
             if (!messageTextBox.State)
@@ -129,11 +124,31 @@ namespace Magic.MarketplaceNET.Facebook
             // digunakan untuk menunggu flickr loading halaman
             if(newOpenChat)
             {
-                Thread.Sleep(3000);
-            }
-            else
-            {
-                //Thread.Sleep(1000);
+                // disini sudah loading sepenuhnya
+                // mesti cek jendela pin/kode sinkronisasi, kasih waktu 5 detik saja
+
+                WebElement pinRequestDialogCloseButton = Chrome.FindElementByXPath($"//div[@role='dialog' and .//span[contains({Chrome.ToLower("text()")}, 'masukkan pin anda')]]//div[{Chrome.ToLower("@aria-label")}='tutup' and @role='button']", 5);
+
+                if (pinRequestDialogCloseButton.State)
+                {
+                    pinRequestDialogCloseButton.SafeClick();
+
+                    WebElement confirmationDialog = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='jangan memulihkan pesan' and @role='button' and .//span[{Chrome.ToLower("text()")}='jangan memulihkan pesan'] and not(ancestor::div[@aria-hidden='true'])]", 5);
+                    confirmationDialog.SafeClick();
+                }
+
+                string messageTextBoxAriaLabel = messageTextBox.Item!.GetAttribute("aria-label");
+                
+                if(messageTextBoxAriaLabel.ToLower() == "terima")
+                {
+                    messageTextBox.SafeClick();
+
+                    messageTextBox = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'tulis ke') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[contains({Chrome.ToLower("@aria-label")}, 'pesan') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[{Chrome.ToLower("@aria-label")}='terima' and @role='button'][.//span[{Chrome.ToLower("normalize-space(.)")}='terima']]", Timeout);
+    
+                    Thread.Sleep(3000);
+                }
+
+                messageTextBox = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@aria-label")}, 'tulis ke') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[contains({Chrome.ToLower("@aria-label")}, 'pesan') and {Chrome.ToLower("@aria-placeholder")}='aa' and @role='textbox']|//div[{Chrome.ToLower("@aria-label")}='terima' and @role='button'][.//span[{Chrome.ToLower("normalize-space(.)")}='terima']]", Timeout);
             }
 
             Magic.HelperNET.PutContentToClipboard(chatMessage);
@@ -194,15 +209,16 @@ namespace Magic.MarketplaceNET.Facebook
 
             //WebElement reviewSent = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower(".")}, 'pesan dalam percakapan')]//span[not(.//span) and contains({Chrome.ToLower(".")}, 'penilaian anda dikirim')]", Timeout);
 
-            WebPage currentPage = Chrome.GetCurrentUrl();
+            WebElement pesanTextBox = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']/ancestor::div[@data-visualcompletion='ignore'][1]//div[{Chrome.ToLower("@aria-label")}='kirim pesan' and @role='textbox']|//div[{Chrome.ToLower("@aria-label")}='pengaturan obrolan' and @role='button']/ancestor::div[@data-visualcompletion='ignore'][1]//div[{Chrome.ToLower("@aria-label")}='pesan' and @role='textbox']", Timeout / 2);
 
-            if (currentPage.Url.Contains("/marketplace/selling/"))
+            if(pesanTextBox.State)
             {
-                ChatEvent?.Invoke(new ChatEventArgs(EventType.ReviewSuccess, Chrome));
-            } 
+                Debug.WriteLine("Chat ======================== : berhasil kirim bintang");
+            }
             else
             {
-                Thread.Sleep(Timeout/2);
+                Debug.WriteLine("Chat ======================== : berhasil kirim bintang dengan catatan, pesanTextBox tidak berhasil dipilih.");
+                Thread.Sleep(60000);
             }
 
         } // end of method
