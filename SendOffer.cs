@@ -92,16 +92,32 @@ namespace Magic.MarketplaceNET.Facebook
             if (safeClickResult.Status)
             {
                 //WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|(//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1])[1])[1]", Timeout);
-                WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]", Timeout);
+                WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and {Chrome.ToLower("text()")}='opsi selengkapnya']", Timeout);
 
-                if (optionButton.Item != null)
+                if (optionButton.State)
                 {
                     SafeClickResult optionButtonSafeClick;
 
-                    if (optionButton.Item.Text != "" && optionButton.Item.Text.ToLower().Contains("lewati"))
+                    if (optionButton.Item!.Text != "" && optionButton.Item.Text.ToLower().Contains("lewati"))
                     {
                         // disini ada bidang elemen yang menawarkan membuat PIN messenger, klik lewati, lalu ambil lagi optionButton 
                         optionButtonSafeClick = optionButton.SafeClick();
+
+                        // pilih kembali optionButtonnya
+                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                    } else if(optionButton.Item!.Text != "" && optionButton.Item.Text.ToLower().Contains("opsi selengkapnya"))
+                    {
+                        // disini ada bidang elemen yang menawarkan membuat PIN messenger, model lainnya
+                        optionButtonSafeClick = optionButton.SafeClick();
+                        WebElement lanjutkanButton = Chrome.FindElementByXPath($"//div[@role='button' and .//span[contains({Chrome.ToLower("text()")}, 'lanjutkan tanpa riwayat')]]", Timeout);
+
+                        lanjutkanButton.SafeClick();
+
+                        WebElement konfirmasiButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='konfirmasi' and @role='button' and .//span[{Chrome.ToLower("text()")}='konfirmasi'] and not(ancestor::div[@aria-hidden='true'])]", Timeout);
+                        
+                        konfirmasiButton.SafeClick();
+
+                        // pilih kembali optionButtonnya
                         optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
                     }
 
