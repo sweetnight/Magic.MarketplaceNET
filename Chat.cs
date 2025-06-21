@@ -218,7 +218,6 @@ namespace Magic.MarketplaceNET.Facebook
             else
             {
                 Debug.WriteLine("Chat ======================== : berhasil kirim bintang dengan catatan, pesanTextBox tidak berhasil dipilih.");
-                Thread.Sleep(60000);
             }
 
         } // end of method

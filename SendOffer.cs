@@ -91,8 +91,8 @@ namespace Magic.MarketplaceNET.Facebook
 
             if (safeClickResult.Status)
             {
-                //WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|(//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1])[1])[1]", Timeout);
-                WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and {Chrome.ToLower("text()")}='opsi selengkapnya']", Timeout);
+                //optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and {Chrome.ToLower("text()")}='opsi selengkapnya']|//div[translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='messenger' and @role='dialog']//div[translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='opsi' and @role='button'])[1]", Timeout);
+                WebElement optionButton = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and contains({Chrome.ToLower("text()")}, 'lewati')]|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[@role='button' and {Chrome.ToLower("text()")}='opsi selengkapnya']|//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button'])[1]", Timeout);
 
                 if (optionButton.State)
                 {
@@ -104,7 +104,7 @@ namespace Magic.MarketplaceNET.Facebook
                         optionButtonSafeClick = optionButton.SafeClick();
 
                         // pilih kembali optionButtonnya
-                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']", Timeout);
                     } else if(optionButton.Item!.Text != "" && optionButton.Item.Text.ToLower().Contains("opsi selengkapnya"))
                     {
                         // disini ada bidang elemen yang menawarkan membuat PIN messenger, model lainnya
@@ -118,7 +118,7 @@ namespace Magic.MarketplaceNET.Facebook
                         konfirmasiButton.SafeClick();
 
                         // pilih kembali optionButtonnya
-                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']/ancestor::div[1]", Timeout);
+                        optionButton = Chrome.FindElementByXPath($"//div[{Chrome.ToLower("@aria-label")}='messenger' and @role='dialog']//div[{Chrome.ToLower("@aria-label")}='opsi' and @role='button']", Timeout);
                     }
 
                     optionButtonSafeClick = optionButton.SafeClick();
@@ -127,15 +127,20 @@ namespace Magic.MarketplaceNET.Facebook
                     {
                         string popUpSwitchXpath = $"//div[contains({Chrome.ToLower("@aria-label")}, 'pop-up pesan') and @role='menuitemcheckbox']";
 
-                        WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath);
+                        WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath(popUpSwitchXpath, Timeout);
                         //WebElement newMessagePopUpSwitch = Chrome.FindElementByXPath($"//div[contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pop-up pesan') and @role='menuitemcheckbox']");
+
+                        Debug.WriteLine("SendOffer ==================== : Akan melakukan cek pop-up pesan option");
 
                         if (newMessagePopUpSwitch.State)
                         {
-                            string? newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
+
+                            string? newMessagePopUpSwitchSelected = newMessagePopUpSwitch.SafeGetAttribute("aria-checked");
 
                             if (newMessagePopUpSwitchSelected != null && newMessagePopUpSwitchSelected == "true")
                             {
+                                Debug.WriteLine("SendOffer ==================== : Pop-up pesan ON. Akan dibuat off.");
+
                                 SafeClickResult newMessagePopUpSwitchClicked = newMessagePopUpSwitch.SafeClick();
 
                                 if (newMessagePopUpSwitchClicked.Status)
@@ -146,8 +151,14 @@ namespace Magic.MarketplaceNET.Facebook
                                         newMessagePopUpSwitchSelected = newMessagePopUpSwitch.Item!.GetAttribute("aria-checked");
 
                                         if (newMessagePopUpSwitchSelected == "false") break;
+
+                                        Thread.Sleep(1000);
                                     }
                                 }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("SendOffer ==================== : Pop-up pesan sudah off dari sebelumnya.");
                             }
                         }
                     }
