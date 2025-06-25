@@ -247,7 +247,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -283,7 +283,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -311,7 +311,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -335,7 +335,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             WebElement pilihanKategoriItem = Chrome.FindElementByXPath($"(//span[{Chrome.ToLower("text()")}='{listingInputs.Category!.ToLower()}'])[last()]", Timeout);
 
@@ -349,7 +349,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -379,7 +379,7 @@ namespace Magic.MarketplaceNET.Facebook
                     return;
                 }
 
-                pilihanKondisiItem = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, 'seperti baru')]/../../../../..//span[contains({Chrome.ToLower("text()")}, '{listingInputs.Condition!.ToLower()}')])[1]", 1);
+                pilihanKondisiItem = Chrome.FindElementByXPath($"(//span[contains({Chrome.ToLower("text()")}, 'seperti baru')]/../../../../..//span[contains({Chrome.ToLower("text()")}, '{listingInputs.Condition!.ToLower()}')])[1]", Timeout);
                 safeClickResult = pilihanKondisiItem.SafeClick();
 
                 if (!safeClickResult.Status)
@@ -399,7 +399,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -424,7 +424,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -438,7 +438,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingAvailability, listingInputs, Chrome));
 
-            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='ketersediaan']/../../..", 1);
+            WebElement pilihanKetersediaanElement = Chrome.FindElementByXPath($"//span[{Chrome.ToLower("text()")}='ketersediaan']/../../..", Timeout);
 
             if(pilihanKetersediaanElement.State)
             {
@@ -465,7 +465,7 @@ namespace Magic.MarketplaceNET.Facebook
                 lastAvailabilityInputExists = false;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -509,7 +509,7 @@ namespace Magic.MarketplaceNET.Facebook
                 lastSKUInputExists = false;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -603,7 +603,7 @@ namespace Magic.MarketplaceNET.Facebook
                 }
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -643,7 +643,7 @@ namespace Magic.MarketplaceNET.Facebook
 
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -876,49 +876,71 @@ namespace Magic.MarketplaceNET.Facebook
 
             PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectingLocation, listingInputs!, Chrome!));
 
-            WebElement inputLokasiElement = Chrome!.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='lokasi']]//input[@type='text']", Timeout);
-            SafeClickResult safeClickResult = inputLokasiElement.SafeClick();
+            SafeClickResult safeClickResult;
+            SafeSendKeysResult safeSendKeysResult;
 
-            if (!safeClickResult.Status)
+            WebElement inputLokasiElement;
+            WebElement inputLokasiItem;
+            WebElement correctOrWrongElement;
+
+            while (true)
             {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickLocationFailed, listingInputs!, Chrome));
-                return;
+                inputLokasiElement = Chrome!.FindElementByXPath($"//div[span[{Chrome.ToLower("text()")}='lokasi']]//input[@type='text']", Timeout);
+
+
+                safeClickResult = inputLokasiElement.SafeClick();
+
+                if (!safeClickResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.ClickLocationFailed, listingInputs!, Chrome));
+                    return;
+                }
+
+                inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
+                inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Delete);
+
+                safeSendKeysResult = inputLokasiElement.SafeCopyAndPaste(listingInputs!.Location!);
+
+                if (!safeSendKeysResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.LocationPasteFailed, listingInputs, Chrome));
+                    return;
+                }
+
+                Thread.Sleep(1000);
+
+
+                if (listingInputs.LocationPosition != 0)
+                {
+                    inputLokasiItem = Chrome.FindElementByXPath($"(//ul[contains({Chrome.ToLower("@aria-label")},'pencarian yang')]/li)[{listingInputs.LocationPosition}]", 5);
+                }
+                else
+                {
+                    inputLokasiItem = Chrome.FindElementByXPath($"//ul[contains({Chrome.ToLower("@aria-label")}, 'pencarian yang') and @role='listbox']//li[@role='option'][1]", 5);
+                }
+
+                safeClickResult = inputLokasiItem.SafeClick();
+
+                if (!safeClickResult.Status)
+                {
+                    PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectLocationFailed, listingInputs, Chrome));
+                    return;
+                }
+
+                correctOrWrongElement = Chrome.FindElementByXPath($"//span[contains({Chrome.ToLower("normalize-space()")}, 'masukkan lokasi yang valid')]|//i[contains({Chrome.ToLower("@aria-label")}, 'input lokasi valid') and ancestor::*[.//span[{Chrome.ToLower("normalize-space()")}='lokasi']]]", Timeout);
+
+                if(correctOrWrongElement.Item!.TagName.ToLowerInvariant() == "span")
+                {
+                    // salah
+                    Debug.WriteLine("Facebook.Post ==================== : Input lokasi tidak valid, akan diulang.");
+                    continue;
+                }
+                else
+                {
+                    // benar
+                    break;
+                }
             }
-
-            //Magic.Helper.PutContentToClipboard(listingInputs.location);
-            inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "a");
-            inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Delete);
-            //safeSendKeysResult = inputLokasiElement.SafeSendKeys(OpenQA.Selenium.Keys.Control + "v");
-            SafeSendKeysResult safeSendKeysResult = inputLokasiElement.SafeCopyAndPaste(listingInputs!.Location!);
-
-            if (!safeSendKeysResult.Status)
-            {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.LocationPasteFailed, listingInputs, Chrome));
-                return;
-            }
-
-            Thread.Sleep(2000);
-
-            WebElement inputLokasiItem = new WebElement();
-
-            if (listingInputs.LocationPosition != 0)
-            {
-                inputLokasiItem = Chrome.FindElementByXPath($"(//ul[contains({Chrome.ToLower("@aria-label")},'pencarian yang')]/li)[{listingInputs.LocationPosition}]", 5);
-            }
-            else
-            {
-                inputLokasiItem = Chrome.FindElementByXPath($"//ul[contains({Chrome.ToLower("@aria-label")}, 'pencarian yang') and @role='listbox']//li[@role='option'][1]", 5);
-            }
-
-            safeClickResult = inputLokasiItem.SafeClick();
-
-            if (!safeClickResult.Status)
-            {
-                PostEvent?.Invoke(new PostEventEventArgs(EventType.SelectLocationFailed, listingInputs, Chrome));
-                return;
-            }
-
-            Thread.Sleep(2000);
 
             if (CancellationToken.IsCancellationRequested)
             {
@@ -948,7 +970,7 @@ namespace Magic.MarketplaceNET.Facebook
                 return false;
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             return true;
 
