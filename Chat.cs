@@ -137,7 +137,7 @@ namespace Magic.MarketplaceNET.Facebook
                     confirmationDialog.SafeClick();
                 }
 
-                string messageTextBoxAriaLabel = messageTextBox.Item!.GetAttribute("aria-label");
+                string messageTextBoxAriaLabel = messageTextBox.SafeGetAttribute("aria-label")!;
                 
                 if(messageTextBoxAriaLabel.ToLower() == "terima")
                 {
