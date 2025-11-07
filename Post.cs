@@ -786,9 +786,12 @@ namespace Magic.MarketplaceNET.Facebook
                 Chrome.Navigate("https://www.facebook.com/marketplace/you/selling");
 
                 //WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"((((//div[{Chrome.ToLower("@aria-label")}='{listingInputs.Title!.ToLower()}'])[2]/../../../../../../div/div/div/div)[2]/div/div)[2]/div/div)[last()]/div/div");
-                WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"(//div[@role='button' and not(.//div[contains(@class, '__fb-light-mode')]) and @aria-label='Opsi lainnya untuk {listingInputs.Title}' and .//i[@data-visualcompletion='css-img' and contains(@style, 'background-image: url(') and contains(@style, 'width: 16px; height: 16px;')]])[1]");
 
-                //((((//div[@aria-label='Lampu Led Motor Bebek Super Terang'])[2]/../../../../../../div/div/div/div)[2]/div/div)[2]/div/div)[last()]/div/div
+                // update 3 Nov 2025
+                //WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"(//div[@role='button' and not(.//div[contains(@class, '__fb-light-mode')]) and @aria-label='Opsi lainnya untuk {listingInputs.Title}' and .//i[@data-visualcompletion='css-img' and contains(@style, 'background-image: url(') and contains(@style, 'width: 16px; height: 16px;')]])[1]");
+                WebElement firstThreeDotSymbol = Chrome.FindElementByXPath($"(//div[{Chrome.ToLower("@aria-label")}='more options for {listingInputs.Title!.ToLower()}' and @role='button'])[1]|(//div[{Chrome.ToLower("@aria-label")}='opsi lainnya untuk {listingInputs.Title.ToLower()}' and @role='button'])[1]");
+
+                // (//div[translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='More options for Set kursi tamu model sudut 10893 #11' and @role='button'])[1]
 
                 if (firstThreeDotSymbol.State)
                 {
