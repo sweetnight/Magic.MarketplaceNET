@@ -21,7 +21,8 @@ namespace Magic.MarketplaceNET
         {
 
             LoggedIn,
-            NotLoggedIn
+            NotLoggedIn,
+            ChromeTimedOut
 
         } // end of enum
 
@@ -80,24 +81,73 @@ namespace Magic.MarketplaceNET
                 Chrome.Navigate("https://seller.shopee.co.id/portal/marketing/pas/top-up");
             }
 
-            BrowserAutomationNET.WebElement isiSaldoAtauLogin = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@class")},'content-box')]//div[contains({Chrome.ToLower("@class")},'breadcrumb')]//a[{Chrome.ToLower("normalize-space(.)")}='isi saldo' and not(ancestor::div[contains({Chrome.ToLower("@class")},'phantom')])]|//form//button[{Chrome.ToLower("normalize-space(.)")}='log in']", Timeout);
+            BrowserAutomationNET.WebElement isiSaldoAtauLogin;
 
-            if (isiSaldoAtauLogin.Item == null) return LoggedInStatus.NotLoggedIn;
-
-            string tag = isiSaldoAtauLogin.Item.TagName.ToLower();
-
-            if (tag == "a")
+            for(int i = 0; i < 10; i++)
             {
-                return LoggedInStatus.LoggedIn;
+                isiSaldoAtauLogin = Chrome.FindElementByXPath($"//div[contains({Chrome.ToLower("@class")},'content-box')]//div[contains({Chrome.ToLower("@class")},'breadcrumb')]//a[{Chrome.ToLower("normalize-space(.)")}='isi saldo' and not(ancestor::div[contains({Chrome.ToLower("@class")},'phantom')])]|//form//button[{Chrome.ToLower("normalize-space(.)")}='log in']|//div[contains(@class,'error-code') and contains(text(),'ERR_CONNECTION_TIMED_OUT')]", Timeout);
+
+                if (isiSaldoAtauLogin.Item == null) return LoggedInStatus.NotLoggedIn;
+
+                string tag = isiSaldoAtauLogin.Item.TagName.ToLower();
+
+                if (tag == "a")
+                {
+                    return LoggedInStatus.LoggedIn;
+                }
+                else if (tag == "button")
+                {
+                    return LoggedInStatus.NotLoggedIn;
+                }
+                else
+                {
+                    Thread.Sleep(10000);
+                    Chrome.Navigate("https://seller.shopee.co.id/portal/marketing/pas/top-up");
+                }
             }
-            else
-            {
-                return LoggedInStatus.NotLoggedIn;
-            }
+
+            return LoggedInStatus.ChromeTimedOut;
 
         } // end of method
 
         public IncreaseBudgetResult IncreaseBudget(int budget)
+        {
+
+            return IncreaseBudgetWithRetryAsync(budget, 3).GetAwaiter().GetResult();
+
+        }// end of method
+
+        public async Task<IncreaseBudgetResult> IncreaseBudgetWithRetryAsync(int budget, int maxRetry = 3)
+        {
+
+            IncreaseBudgetResult lastResult = IncreaseBudgetResult.ErrorSomehow;
+
+            for (int attempt = 1; attempt <= maxRetry; attempt++)
+            {
+                Debug.WriteLine($"[IncreaseBudget] Attempt {attempt}");
+
+                lastResult = IncreaseBudgetInternal(budget);
+
+                if (lastResult == IncreaseBudgetResult.SuccessUsingBalance ||
+                    lastResult == IncreaseBudgetResult.SuccessUsingShopeePay)
+                {
+                    return lastResult;
+                }
+
+                if (lastResult != IncreaseBudgetResult.WrongPinSeller &&
+                    lastResult != IncreaseBudgetResult.WrongPinShopeePay)
+                {
+                    return lastResult; // error lain jangan retry
+                }
+
+                await Task.Delay(2000 + _rand.Next(1000), CancellationToken);
+            }
+
+            return lastResult; // setelah 3x full retry masih salah
+
+        } // end of method
+
+        public IncreaseBudgetResult IncreaseBudgetInternal(int budget)
         {
 
             if(PaymentSourcesSelected.Count == 0)
@@ -114,7 +164,26 @@ namespace Magic.MarketplaceNET
 
             // HALAMAN INPUT NILAI
 
-            BrowserAutomationNET.WebElement masukkanJumlahSaldoLainnyaButton = Chrome.FindElementByXPath($"//button[.//span[contains({Chrome.ToLower("normalize-space(.)")},'masukkan jumlah isi ulang saldo lainnya')]]", Timeout);
+            BrowserAutomationNET.WebElement masukkanJumlahSaldoLainnyaButton = new BrowserAutomationNET.WebElement();
+
+            for (int i = 0; i < 10; i++)
+            {
+                masukkanJumlahSaldoLainnyaButton = Chrome.FindElementByXPath($"//button[.//span[contains({Chrome.ToLower("normalize-space(.)")},'masukkan jumlah isi ulang saldo lainnya')]]|//div[contains(@class,'error-code') and contains(text(),'ERR_CONNECTION_TIMED_OUT')]", Timeout);
+
+                if (masukkanJumlahSaldoLainnyaButton.Item == null) return IncreaseBudgetResult.ErrorSomehow;
+
+                string tag = masukkanJumlahSaldoLainnyaButton.Item.TagName.ToLower();
+
+                if (tag == "button")
+                {
+                    break;
+                }
+                else
+                {
+                    Thread.Sleep(10000);
+                    Chrome.Navigate("https://seller.shopee.co.id/portal/marketing/pas/top-up");
+                }
+            }
             
             CancellationToken.ThrowIfCancellationRequested();
             SafeClickResult safeClickResult = masukkanJumlahSaldoLainnyaButton.SafeClick();
